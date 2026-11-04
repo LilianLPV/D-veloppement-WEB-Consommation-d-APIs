@@ -2,6 +2,7 @@ package main
 
 import (
 	"jul-spotify/handlers"
+	"jul-spotify/spotify"
 	"log"
 	"net/http"
 	"os"
@@ -30,4 +31,5 @@ func main() {
 
 	log.Println("Starting server on localhost:8080")
 	log.Fatal(http.ListenAndServe("localhost:8080", nil))
+
 }
