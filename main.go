@@ -2,9 +2,11 @@ package main
 
 import (
 	"jul-spotify/handlers"
+	"jul-spotify/spotify"
 	"log"
 	"net/http"
 	"os"
+
 	"github.com/joho/godotenv"
 )
 

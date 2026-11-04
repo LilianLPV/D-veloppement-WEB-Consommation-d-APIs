@@ -16,6 +16,9 @@ var httpClient = http.Client{
 	Timeout: 5 * time.Second,
 }
 
+var tokenExpiration time.Time
+var currentToken string
+
 // Les tags Json font le lien entre les clés du JSON et les champs de la structure.
 type SpotifyTokenResponse struct {
 	AccessToken string `json:"access_token"`
@@ -24,7 +27,7 @@ type SpotifyTokenResponse struct {
 }
 
 // RequestTokenSpotify envoie une requête POST à l'API de Spotify pour obtenir un token d'accès.
-func RequestTokenSpotify() (string, error) {
+func RequestTokenSpotify() (SpotifyTokenResponse, error) {
 
 	//url.Values se charge de formater les données pour une requête POST.
 	data := url.Values{}
@@ -35,7 +38,7 @@ func RequestTokenSpotify() (string, error) {
 	// Création de la requête POST avec les données encodées.
 	req, err := http.NewRequest("POST", "https://accounts.spotify.com/api/token", strings.NewReader(data.Encode()))
 	if err != nil {
-		return "", err
+		return SpotifyTokenResponse{}, err
 	}
 
 	//Indique à Spotify que les données sont encodées en x-www-form-urlencoded et non Json.
@@ -44,7 +47,7 @@ func RequestTokenSpotify() (string, error) {
 	//Envoi de la requête et récupération de la réponse.
 	resp, err := httpClient.Do(req)
 	if err != nil {
-		return "", err
+		return SpotifyTokenResponse{}, err
 	}
 
 	// Ferme le body de la réponse à la fin de la fonction pour éviter les fuites de mémoire.
@@ -53,20 +56,37 @@ func RequestTokenSpotify() (string, error) {
 	//Lecture complète du body
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return "", err
+		return SpotifyTokenResponse{}, err
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("Erreur lors de la récupération du token: %s", resp.Status)
+		return SpotifyTokenResponse{}, fmt.Errorf("Erreur lors de la récupération du token: %s", resp.Status)
 	}
 
 	//Décodage du JSON dans la structure.
 	var tokenResponse SpotifyTokenResponse
 	err = json.Unmarshal(body, &tokenResponse)
 	if err != nil {
-		return "", err
+		return SpotifyTokenResponse{}, err
 	}
 
 	// Retourne le token et nil pour indiquer qu'il n'y a pas d'erreur.
-	return tokenResponse.AccessToken, nil
+	return tokenResponse, nil
+}
+
+func GetToken() (string, error) {
+
+	if currentToken != "" && time.Now().Add(time.Minute).Before(tokenExpiration) {
+		return currentToken, nil
+	}
+
+	tokenResponse, err := RequestTokenSpotify()
+	if err != nil {
+		return "", err
+	}
+
+	tokenExpiration = time.Now().Add(time.Duration(tokenResponse.ExpiresIn) * time.Second)
+	currentToken = tokenResponse.AccessToken
+
+	return currentToken, nil
 }
