@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-
 	"github.com/joho/godotenv"
 )
 
@@ -30,4 +29,5 @@ func main() {
 
 	log.Println("Starting server on localhost:8080")
 	log.Fatal(http.ListenAndServe("localhost:8080", nil))
+
 }
