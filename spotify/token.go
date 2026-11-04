@@ -2,6 +2,7 @@ package spotify
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -10,8 +11,7 @@ import (
 	"time"
 )
 
-
-//Le timeout va éviter que la requête bloque indéfiniment si Spotify ne répond pas.
+// Le timeout va éviter que la requête bloque indéfiniment si Spotify ne répond pas.
 var httpClient = http.Client{
 	Timeout: 5 * time.Second,
 }
@@ -23,7 +23,6 @@ type SpotifyTokenResponse struct {
 	ExpiresIn   int    `json:"expires_in"`
 }
 
-
 // RequestTokenSpotify envoie une requête POST à l'API de Spotify pour obtenir un token d'accès.
 func RequestTokenSpotify() (string, error) {
 
@@ -32,7 +31,6 @@ func RequestTokenSpotify() (string, error) {
 	data.Add("client_id", os.Getenv("SPOTIFY_CLIENT_ID"))
 	data.Add("client_secret", os.Getenv("SPOTIFY_CLIENT_SECRET"))
 	data.Add("grant_type", "client_credentials")
-
 
 	// Création de la requête POST avec les données encodées.
 	req, err := http.NewRequest("POST", "https://accounts.spotify.com/api/token", strings.NewReader(data.Encode()))
@@ -52,10 +50,14 @@ func RequestTokenSpotify() (string, error) {
 	// Ferme le body de la réponse à la fin de la fonction pour éviter les fuites de mémoire.
 	defer resp.Body.Close()
 
-	//Lecture complète du body 
+	//Lecture complète du body
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("Erreur lors de la récupération du token: %s", resp.Status)
 	}
 
 	//Décodage du JSON dans la structure.
