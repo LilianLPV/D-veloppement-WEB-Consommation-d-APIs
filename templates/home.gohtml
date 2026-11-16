@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Les titres de JUL</title>
+    <link rel="stylesheet" href="/static/css/home.css">
+</head>
+<body>
+    <header>
+        <h1>Les titres de JUL</h1>
+    </header>
+
+    <form method="GET" action="/" class="filters">
+        <label>
+            Année
+            <select name="year">
+                <option value="">Toutes</option>
+                {{range .Years}}
+                    <option value="{{.}}" {{if eq . $.Filters.Year}}selected{{end}}>{{.}}</option>
+                {{end}}
+            </select>
+        </label>
+
+        <label>
+            Type
+            <select name="type">
+                <option value="">Tous</option>
+                <option value="single" {{if eq .Filters.Type "single"}}selected{{end}}>Single</option>
+                <option value="album" {{if eq .Filters.Type "album"}}selected{{end}}>Album</option>
+            </select>
+        </label>
+
+        <label>
+            Feat
+            <select name="feat">
+                <option value="">Tous</option>
+                <option value="oui" {{if eq .Filters.Feat "oui"}}selected{{end}}>Oui</option>
+                <option value="non" {{if eq .Filters.Feat "non"}}selected{{end}}>Non (JUL seul)</option>
+            </select>
+        </label>
+
+        <button type="submit">Filtrer</button>
+        <a href="/" class="reset">Réinitialiser</a>
+    </form>
+
+    <p class="count">{{.Total}} titre(s)</p>
+
+    <main class="tracks">
+        {{range .Tracks}}
+            <article class="card">
+                {{if .Cover}}
+                    <img src="{{.Cover}}" alt="Pochette de {{.Name}}" loading="lazy">
+                {{end}}
+                <h2>{{.Name}}</h2>
+                <p class="artists">{{.Artists}}</p>
+                <p class="meta">{{.ReleaseDate}} · {{.Duration}}</p>
+                <a href="/tracks/{{.ID}}" class="button">Voir le détail</a>
+            </article>
+        {{else}}
+            <p class="empty">Aucun titre ne correspond à ces filtres.</p>
+        {{end}}
+    </main>
+</body>
+</html>
