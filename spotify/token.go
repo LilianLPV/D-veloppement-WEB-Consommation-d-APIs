@@ -11,7 +11,6 @@ import (
 	"time"
 )
 
-// Le timeout va éviter que la requête bloque indéfiniment si Spotify ne répond pas.
 var httpClient = http.Client{
 	Timeout: 5 * time.Second,
 }
@@ -19,17 +18,14 @@ var httpClient = http.Client{
 var tokenExpiration time.Time
 var currentToken string
 
-// Les tags Json font le lien entre les clés du JSON et les champs de la structure.
 type SpotifyTokenResponse struct {
 	AccessToken string `json:"access_token"`
 	TokenType   string `json:"token_type"`
 	ExpiresIn   int    `json:"expires_in"`
 }
 
-// RequestTokenSpotify envoie une requête POST à l'API de Spotify pour obtenir un token d'accès.
 func RequestTokenSpotify() (SpotifyTokenResponse, error) {
 
-	//url.Values se charge de formater les données pour une requête POST.
 	data := url.Values{}
 	data.Add("client_id", os.Getenv("SPOTIFY_CLIENT_ID"))
 	data.Add("client_secret", os.Getenv("SPOTIFY_CLIENT_SECRET"))
@@ -41,16 +37,13 @@ func RequestTokenSpotify() (SpotifyTokenResponse, error) {
 		return SpotifyTokenResponse{}, err
 	}
 
-	//Indique à Spotify que les données sont encodées en x-www-form-urlencoded et non Json.
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
-	//Envoi de la requête et récupération de la réponse.
 	resp, err := httpClient.Do(req)
 	if err != nil {
 		return SpotifyTokenResponse{}, err
 	}
 
-	// Ferme le body de la réponse à la fin de la fonction pour éviter les fuites de mémoire.
 	defer resp.Body.Close()
 
 	//Lecture complète du body
@@ -70,7 +63,7 @@ func RequestTokenSpotify() (SpotifyTokenResponse, error) {
 		return SpotifyTokenResponse{}, err
 	}
 
-	// Retourne le token et nil pour indiquer qu'il n'y a pas d'erreur.
+	// Retourne le token et nil
 	return tokenResponse, nil
 }
 
