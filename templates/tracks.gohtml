@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Name}} – JUL</title>
+    <link rel="stylesheet" href="/static/css/tracks.css">
+</head>
+<body>
+    <a href="/" class="back">Tous les titres</a>
+
+    <main class="track">
+        {{if .Cover}}
+            <img src="{{.Cover}}" alt="Pochette de l'album" class="cover">
+        {{end}}
+
+        <div class="infos">
+            <h1>{{.Name}}</h1>
+            <p><strong>Album :</strong> {{.AlbumName}}</p>
+            <p><strong>Artistes :</strong> {{.Artists}}</p>
+            <p><strong>Date de sortie :</strong> {{.ReleaseDate}}</p>
+            <p><strong>Durée :</strong> {{.Duration}}</p>
+
+            <a href="{{.SpotifyURL}}" target="_blank" rel="noopener" class="spotify-link">
+                Écouter sur Spotify
+            </a>
+        </div>
+    </main>
+</body>
+</html>
