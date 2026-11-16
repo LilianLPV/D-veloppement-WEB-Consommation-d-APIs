@@ -1,0 +1,232 @@
+{
+  "info": {
+    "_postman_id": "504c9b0c-b3fe-485c-83ab-a76e212f4a70",
+    "name": "TP API Spotify - JUL",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{access_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Q0 - Obtenir un token (Client Credentials)",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/x-www-form-urlencoded"
+          }
+        ],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "grant_type",
+              "value": "client_credentials",
+              "type": "text"
+            },
+            {
+              "key": "client_id",
+              "value": "{{SPOTIFY_CLIENT_ID}}",
+              "type": "text"
+            },
+            {
+              "key": "client_secret",
+              "value": "{{SPOTIFY_CLIENT_SECRET}}",
+              "type": "text"
+            }
+          ]
+        },
+        "url": {
+          "raw": "https://accounts.spotify.com/api/token",
+          "host": [
+            "https://accounts.spotify.com"
+          ],
+          "path": [
+            "api",
+            "token"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Q1 - Rechercher un artiste (JUL)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/search?q=JUL&type=artist&limit=3",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "search"
+          ],
+          "query": [
+            {
+              "key": "q",
+              "value": "JUL"
+            },
+            {
+              "key": "type",
+              "value": "artist"
+            },
+            {
+              "key": "limit",
+              "value": "3"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Q2 - Rechercher les titres de JUL",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/search?q=artist:JUL&type=track&limit=10",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "search"
+          ],
+          "query": [
+            {
+              "key": "q",
+              "value": "artist:JUL"
+            },
+            {
+              "key": "type",
+              "value": "track"
+            },
+            {
+              "key": "limit",
+              "value": "10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Q3 - Récupérer un titre par son ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/tracks/{{track_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "tracks",
+            "{{track_id}}"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Q4 - Réponses d'erreur",
+      "item": [
+        {
+          "name": "Q4a - Sans token",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tracks/1fMOAIge1jLxq4ONi9bIFL",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tracks",
+                "1fMOAIge1jLxq4ONi9bIFL"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Q4b - Token invalide",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "token_invalide",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tracks/1fMOAIge1jLxq4ONi9bIFL",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tracks",
+                "1fMOAIge1jLxq4ONi9bIFL"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Q4c - Identifiant de titre inexistant",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tracks/0000000000000000000000",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tracks",
+                "0000000000000000000000"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://api.spotify.com/v1"
+    },
+    {
+      "key": "SPOTIFY_CLIENT_ID",
+      "value": ""
+    },
+    {
+      "key": "SPOTIFY_CLIENT_SECRET",
+      "value": ""
+    },
+    {
+      "key": "access_token",
+      "value": ""
+    },
+    {
+      "key": "track_id",
+      "value": "0goer5e8B6SJaTV2B51k6f"
+    }
+  ]
+}
